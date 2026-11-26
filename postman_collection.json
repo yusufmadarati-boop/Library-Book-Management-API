@@ -1,0 +1,198 @@
+{
+  "info": {
+    "_postman_id": "a9c7b12d-45f8-4e33-9112-984e4e99f123",
+    "name": "Library Book Management API (Prisma + PostgreSQL)",
+    "description": "Postman Collection for testing the upgraded Library Book Management REST API (Express 5 + TypeScript + Prisma ORM + PostgreSQL). Includes all 5 CRUD operations, Zod validation tests, filtering, and error handling.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "bookId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health & Welcome",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": ["{{baseUrl}}"],
+          "path": [""]
+        },
+        "description": "Checks the API status and returns the list of available endpoints."
+      }
+    },
+    {
+      "name": "1. Get All Books",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books"]
+        },
+        "description": "Retrieve all books from PostgreSQL via Prisma."
+      }
+    },
+    {
+      "name": "1b. Get All Books (Filtered)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/books?available=true&genre=Software%20Engineering",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books"],
+          "query": [
+            {
+              "key": "available",
+              "value": "true"
+            },
+            {
+              "key": "genre",
+              "value": "Software Engineering"
+            }
+          ]
+        },
+        "description": "Filter books by availability and genre in PostgreSQL."
+      }
+    },
+    {
+      "name": "2. Get Book by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books", "{{bookId}}"]
+        },
+        "description": "Retrieve a single book by its ID."
+      }
+    },
+    {
+      "name": "2b. Get Book by ID (Not Found - 404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/books/non-existent-id",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books", "non-existent-id"]
+        },
+        "description": "Expected 404 error when book ID does not exist."
+      }
+    },
+    {
+      "name": "3. Create Book (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Designing Data-Intensive Applications\",\n  \"author\": \"Martin Kleppmann\",\n  \"genre\": \"Data Engineering\",\n  \"available\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books"]
+        },
+        "description": "Create a new book in PostgreSQL with Zod validation. Available defaults to true if omitted."
+      }
+    },
+    {
+      "name": "3b. Create Book (Zod Validation Error - 400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"\",\n  \"genre\": \"Science\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books"]
+        },
+        "description": "Tests Zod validation by omitting required author and leaving title empty."
+      }
+    },
+    {
+      "name": "4. Update Book (PATCH)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"available\": false,\n  \"genre\": \"Advanced Programming\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books", "{{bookId}}"]
+        },
+        "description": "Partially update book fields (title, author, genre, or available) in PostgreSQL."
+      }
+    },
+    {
+      "name": "4b. Update Book (Zod Validation Error - 400)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books", "{{bookId}}"]
+        },
+        "description": "Fails validation because at least one field must be provided in PATCH body."
+      }
+    },
+    {
+      "name": "5. Delete Book (DELETE)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "books", "{{bookId}}"]
+        },
+        "description": "Delete a book by ID from PostgreSQL."
+      }
+    }
+  ]
+}
